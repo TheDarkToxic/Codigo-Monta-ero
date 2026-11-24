@@ -1,0 +1,13 @@
+﻿id_proveedor;nombre;nit;contacto;correo;ciudad;modelo_abastecimiento
+P001;Industrias Metálicas Antioquia S.A.S.;900123137-7;Carolina Restrepo;compras@metalicasantioquia.example;Itagüí;Orden de compra
+P002;Inyectora del Valle Ltda.;900123274-1;Andrés Muñoz;compras@inyectoravalle.example;Cali;Inhouse
+P003;Empacadora Cartón Andino S.A.;900123411-7;Diana Castaño;compras@cartonandino.example;Guarne;Consignación
+P004;Tornillería Norte de Santander SAS;900123548-0;Juan Ospina;compras@tornillerianorte.example;Cúcuta;Orden de compra
+P005;Resortes Industriales Oriente Colombia S.A.;900123685-0;Luisa Henao;compras@resortesoriente.example;Rionegro;Inhouse
+P006;Vidrios Templados Medellín Ltda.;900123822-6;Felipe Giraldo;compras@vidriostemplados.example;Medellín;Consignación
+P007;Motores Pequeños Antioquia S.A.S.;900123959-0;Natalia Arango;compras@motoresantioquia.example;Bello;Orden de compra
+P008;Fundición de Caldas S.A.;900124096-1;Santiago Mejía;compras@fundicioncaldas.example;Manizales;Inhouse
+P009;Plásticos EcoPaisa S.A.S.;900124233-5;Paula Ríos;compras@plasticosecopaisa.example;La Estrella;Consignación
+P010;Acero Refractario Antioquia Ltda.;900124370-3;Camilo Vélez;compras@acerorefractario.example;Sabaneta;Orden de compra
+P011;Disolventes Químicos Andino Ltda.;900124507-9;Valentina López;;Copacabana;Inhouse
+P012;Tuercas y Pernos El Carmen S.A.S.;900124644-2;Sebastián Marín;compras.tuercasypernos.example;El Carmen de Viboral;Consignación

@@ -1,0 +1,37 @@
+﻿periodo;id_proveedor;nombre_proveedor;lineas;lineas_a_tiempo;lineas_completas;lineas_otif;pct_otif;pct_nivel_inventario;pct_ns_integral;meta;calificacion
+2026-08;P001;Industrias Metálicas Antioquia S.A.S.;14;14;14;14;100.0;97.3;98.7;90;Cumple
+2026-08;P002;Inyectora del Valle Ltda.;12;12;12;12;100.0;99.6;99.8;90;Cumple
+2026-08;P003;Empacadora Cartón Andino S.A.;11;11;11;11;100.0;99.8;99.9;90;Cumple
+2026-08;P004;Tornillería Norte de Santander SAS;12;12;12;12;100.0;97.8;98.9;90;Cumple
+2026-08;P005;Resortes Industriales Oriente Colombia S.A.;10;9;9;8;80.0;86.7;83.4;90;No cumple
+2026-08;P006;Vidrios Templados Medellín Ltda.;14;13;13;12;85.7;87.2;86.5;90;No cumple
+2026-08;P007;Motores Pequeños Antioquia S.A.S.;13;12;12;11;84.6;89.3;87.0;90;No cumple
+2026-08;P008;Fundición de Caldas S.A.;12;11;11;10;83.3;93.0;88.2;90;No cumple
+2026-08;P009;Plásticos EcoPaisa S.A.S.;12;11;11;10;83.3;84.5;83.9;90;No cumple
+2026-08;P010;Acero Refractario Antioquia Ltda.;13;12;12;11;84.6;85.5;85.1;90;No cumple
+2026-08;P011;Disolventes Químicos Andino Ltda.;13;9;9;7;53.8;77.4;65.6;90;No cumple
+2026-08;P012;Tuercas y Pernos El Carmen S.A.S.;11;7;8;6;54.5;68.9;61.7;90;No cumple
+2026-09;P001;Industrias Metálicas Antioquia S.A.S.;10;10;10;10;100.0;95.4;97.7;90;Cumple
+2026-09;P002;Inyectora del Valle Ltda.;12;12;12;12;100.0;99.6;99.8;90;Cumple
+2026-09;P003;Empacadora Cartón Andino S.A.;13;13;13;13;100.0;94.7;97.4;90;Cumple
+2026-09;P004;Tornillería Norte de Santander SAS;14;14;14;14;100.0;97.1;98.6;90;Cumple
+2026-09;P005;Resortes Industriales Oriente Colombia S.A.;14;13;13;12;85.7;80.1;82.9;90;No cumple
+2026-09;P006;Vidrios Templados Medellín Ltda.;14;13;13;12;85.7;93.4;89.6;90;No cumple
+2026-09;P007;Motores Pequeños Antioquia S.A.S.;10;9;9;8;80.0;85.2;82.6;90;No cumple
+2026-09;P008;Fundición de Caldas S.A.;12;11;11;10;83.3;82.0;82.7;90;No cumple
+2026-09;P009;Plásticos EcoPaisa S.A.S.;12;11;11;10;83.3;88.3;85.8;90;No cumple
+2026-09;P010;Acero Refractario Antioquia Ltda.;14;13;13;12;85.7;80.7;83.2;90;No cumple
+2026-09;P011;Disolventes Químicos Andino Ltda.;12;8;9;7;58.3;61.0;59.7;90;No cumple
+2026-09;P012;Tuercas y Pernos El Carmen S.A.S.;10;7;7;6;60.0;66.3;63.2;90;No cumple
+2026-10;P001;Industrias Metálicas Antioquia S.A.S.;13;13;13;13;100.0;94.9;97.5;90;Cumple
+2026-10;P002;Inyectora del Valle Ltda.;13;13;13;13;100.0;95.4;97.7;90;Cumple
+2026-10;P003;Empacadora Cartón Andino S.A.;10;10;10;10;100.0;94.5;97.3;90;Cumple
+2026-10;P004;Tornillería Norte de Santander SAS;10;10;10;10;100.0;97.1;98.6;90;Cumple
+2026-10;P005;Resortes Industriales Oriente Colombia S.A.;13;12;12;11;84.6;84.9;84.8;90;No cumple
+2026-10;P006;Vidrios Templados Medellín Ltda.;10;9;9;8;80.0;91.9;86.0;90;No cumple
+2026-10;P007;Motores Pequeños Antioquia S.A.S.;11;10;10;9;81.8;84.1;83.0;90;No cumple
+2026-10;P008;Fundición de Caldas S.A.;13;12;12;11;84.6;94.0;89.3;90;No cumple
+2026-10;P009;Plásticos EcoPaisa S.A.S.;12;11;11;10;83.3;95.6;89.5;90;No cumple
+2026-10;P010;Acero Refractario Antioquia Ltda.;12;11;11;10;83.3;86.7;85.0;90;No cumple
+2026-10;P011;Disolventes Químicos Andino Ltda.;13;9;9;7;53.8;73.9;63.9;90;No cumple
+2026-10;P012;Tuercas y Pernos El Carmen S.A.S.;10;7;7;6;60.0;75.5;67.8;90;No cumple
