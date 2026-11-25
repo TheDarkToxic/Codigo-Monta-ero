@@ -150,6 +150,26 @@ function dibujarTarjetas() {
     agregarLinea(tarjeta, "Meta", sinDecimales(indicador.meta));
     agregarLinea(tarjeta, "Calificación", indicador.calificacion || "sin dato");
 
+    // Avisos (ver TODO 3). Una tarjeta puede tener varios avisos.
+    const avisoCorreo = revisarCorreo(proveedor ? proveedor.correo : "");
+    if (avisoCorreo !== "") {
+      agregarAviso(tarjeta, avisoCorreo);
+      tarjeta.classList.add("warning");  // resaltar la tarjeta con problema de correo
+    }
+    if (faltanDatos(indicador)) {
+      agregarAviso(tarjeta, "Faltan datos");
+    }
+
+    // Mensaje completo (ver TODO 3), un párrafo por parte.
+    const subtitulo = document.createElement("h3");
+    subtitulo.textContent = "Mensaje";
+    tarjeta.appendChild(subtitulo);
+    for (const parrafo of armarMensaje(indicador, proveedor, nombre)) {
+      const p = document.createElement("p");
+      p.textContent = parrafo;
+      tarjeta.appendChild(p);
+    }
+
     // Poner la tarjeta en la página.
     providersContainer.appendChild(tarjeta);
   }
@@ -158,3 +178,100 @@ function dibujarTarjetas() {
 // TODO 3: armar el mensaje y avisar si falta el correo.
 //   - Escribe el texto del correo con los valores del proveedor.
 //   - Si el correo está vacío o no es válido, muestra un aviso en esa tarjeta.
+//
+// Ojo: aquí solo hay funciones (function ...), no variables sueltas.
+// Así se pueden usar desde dibujarTarjetas(), que se ejecuta antes de llegar a esta parte.
+
+// Revisa el correo según la regla de CLAUDE.md.
+// Devuelve el texto del aviso, o "" (texto vacío) si el correo es válido.
+function revisarCorreo(correo) {
+  // Sin correo: vacío, nulo o solo espacios.
+  if (!correo || correo.trim() === "") {
+    return "Sin correo registrado";
+  }
+  // No tiene @.
+  if (!correo.includes("@")) {
+    return "Correo no válido (le falta @)";
+  }
+  // Partir el correo por la @: "nombre@empresa.example" -> ["nombre", "empresa.example"]
+  const partes = correo.split("@");
+  const unaSolaArroba = partes.length === 2;
+  const algoAntes = partes[0] !== "";
+  const puntoDespues = unaSolaArroba && partes[1].includes(".");
+  if (unaSolaArroba && algoAntes && puntoDespues) {
+    return "";  // correo válido: no hay aviso
+  }
+  return "Correo no válido";
+}
+
+// Revisa si al indicador le falta alguno de los datos que usa el mensaje.
+// Devuelve true (sí faltan) o false (está completo).
+function faltanDatos(indicador) {
+  const camposNumericos = ["lineas", "lineas_otif", "pct_otif", "pct_nivel_inventario", "pct_ns_integral", "meta"];
+  for (const campo of camposNumericos) {
+    if (faltaDato(indicador[campo])) {
+      return true;
+    }
+  }
+  // La calificación es texto, por eso se revisa aparte.
+  if (!indicador.calificacion) {
+    return true;
+  }
+  return false;
+}
+
+// Muestra un número entero (como las líneas) o "sin dato" si falta.
+function entero(valor) {
+  if (faltaDato(valor)) {
+    return "sin dato";
+  }
+  return String(valor);
+}
+
+// Arma el mensaje completo para un proveedor, con el texto de CLAUDE.md.
+// Devuelve una lista de párrafos: [cuerpo, final, cierre].
+function armarMensaje(indicador, proveedor, nombre) {
+  // Saludo: con el contacto, o "equipo de ..." si no hay contacto.
+  let saludo;
+  if (proveedor && proveedor.contacto) {
+    saludo = "Hola, " + proveedor.contacto + ".";
+  } else {
+    saludo = "Hola, equipo de " + nombre + ".";
+  }
+
+  // Cuerpo del mensaje con los valores del mes.
+  const cuerpo = saludo +
+    " Compartimos los indicadores de nivel de servicio de " + nombre +
+    " para " + mesEnLetras(indicador.periodo) + ":" +
+    " de " + entero(indicador.lineas) + " líneas, " +
+    entero(indicador.lineas_otif) + " llegaron a tiempo y completas" +
+    " (OTIF " + conPorcentaje(indicador.pct_otif) + ")." +
+    " Nivel de inventario: " + conPorcentaje(indicador.pct_nivel_inventario) + "." +
+    " NS integral: " + conUnDecimal(indicador.pct_ns_integral) +
+    " frente a una meta de " + sinDecimales(indicador.meta) + "." +
+    " Calificación del mes: " + (indicador.calificacion || "sin dato") + ".";
+
+  // Final según la calificación.
+  let final = "";
+  if (indicador.calificacion === "Cumple") {
+    final = "Gracias por mantener este nivel de servicio.";
+  } else if (indicador.calificacion === "No cumple") {
+    final = "Le pedimos enviarnos un plan de acción para mejorar estos resultados.";
+  }
+  // Si no hay calificación, no ponemos final (la tarjeta ya dirá «Faltan datos»).
+
+  const cierre = "Cordialmente, Abastecimiento y Compras – Industrias Haceb.";
+
+  // Devolver solo los párrafos que tienen texto.
+  return [cuerpo, final, cierre].filter(function (parrafo) {
+    return parrafo !== "";
+  });
+}
+
+// Agrega un aviso a la tarjeta, con el estilo "warning-text" de estilos.css.
+function agregarAviso(tarjeta, texto) {
+  const aviso = document.createElement("p");
+  aviso.classList.add("warning-text");
+  aviso.textContent = "⚠ " + texto;
+  tarjeta.appendChild(aviso);
+}
