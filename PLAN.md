@@ -13,8 +13,8 @@ Marca cada tarea cambiando `[ ]` por `[x]` cuando la termines.
 - [x] Ronda 3: resumen y diseño
 - [x] Ronda 4: filtros y buscador
 - [x] Ronda 5: copiar, borrador de correo y CSV
-- [ ] Ronda 6: revisión y comentarios
-- [ ] Ronda 7: EXPLICACION.md
+- [x] Ronda 6: revisión y comentarios
+- [x] Ronda 7: EXPLICACION.md
 
 ## Fase 3 – Validación
 - [ ] 6 pruebas técnicas en PRUEBAS.md
