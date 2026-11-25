@@ -58,6 +58,8 @@ function elegirMes() {
   console.log("Mes elegido:", mesEnLetras(periodoElegido), "- registros:", indicadoresDelMes.length);
   // Volver a dibujar las tarjetas con el mes nuevo (ver TODO 2).
   dibujarTarjetas();
+  // Actualizar las 4 cifras del resumen (ver final del archivo).
+  dibujarResumen();
 }
 
 // 5) Cada vez que la persona cambie el mes, volver a filtrar.
@@ -125,7 +127,7 @@ function dibujarTarjetas() {
     // El nombre y el correo salen de "proveedores" (acuerdo en CLAUDE.md).
     // Si no encontramos al proveedor, usamos el nombre que trae el indicador.
     const nombre = proveedor ? proveedor.nombre : indicador.nombre_proveedor;
-    const correo = proveedor && proveedor.correo ? proveedor.correo : "sin dato";
+    const correo = proveedor && proveedor.correo ? proveedor.correo : "(vacío)";
 
     // Crear la tarjeta. Los estilos "card", "ok" y "fail" ya están en estilos.css.
     const tarjeta = document.createElement("article");
@@ -140,6 +142,15 @@ function dibujarTarjetas() {
     const titulo = document.createElement("h2");
     titulo.textContent = nombre;
     tarjeta.appendChild(titulo);
+
+    // Etiqueta de color con la calificación: verde «Cumple» o roja «No cumple».
+    if (indicador.calificacion === "Cumple" || indicador.calificacion === "No cumple") {
+      const etiqueta = document.createElement("span");
+      etiqueta.classList.add("etiqueta");
+      etiqueta.classList.add(indicador.calificacion === "Cumple" ? "cumple" : "no-cumple");
+      etiqueta.textContent = indicador.calificacion;
+      tarjeta.appendChild(etiqueta);
+    }
 
     // Una línea por cada dato.
     agregarLinea(tarjeta, "Código", indicador.id_proveedor);
@@ -274,4 +285,52 @@ function agregarAviso(tarjeta, texto) {
   aviso.classList.add("warning-text");
   aviso.textContent = "⚠ " + texto;
   tarjeta.appendChild(aviso);
+}
+
+// RESUMEN DEL MES (Ronda 3)
+// Cuenta y muestra 4 cifras del mes elegido: mensajes generados, cuántos cumplen,
+// cuántos no cumplen y cuántos tienen aviso de correo.
+function dibujarResumen() {
+  let cumplen = 0;
+  let noCumplen = 0;
+  let conAvisoCorreo = 0;
+
+  for (const indicador of indicadoresDelMes) {
+    if (indicador.calificacion === "Cumple") {
+      cumplen = cumplen + 1;
+    } else if (indicador.calificacion === "No cumple") {
+      noCumplen = noCumplen + 1;
+    }
+    // Usamos la misma revisión de correo que las tarjetas, para que siempre coincidan.
+    const proveedor = buscarProveedor(indicador.id_proveedor);
+    if (revisarCorreo(proveedor ? proveedor.correo : "") !== "") {
+      conAvisoCorreo = conAvisoCorreo + 1;
+    }
+  }
+
+  // Se genera un mensaje por cada indicador del mes.
+  const cifras = [
+    { numero: indicadoresDelMes.length, texto: "Mensajes generados", estilo: "total" },
+    { numero: cumplen, texto: "Cumplen", estilo: "cumple" },
+    { numero: noCumplen, texto: "No cumplen", estilo: "no-cumple" },
+    { numero: conAvisoCorreo, texto: "Con aviso de correo", estilo: "aviso" }
+  ];
+
+  const resumen = document.getElementById("resumen");
+  resumen.innerHTML = "";  // limpiar el resumen anterior
+
+  for (const cifra of cifras) {
+    const caja = document.createElement("div");
+    caja.classList.add("cifra");
+    caja.classList.add(cifra.estilo);
+
+    const numero = document.createElement("strong");
+    numero.textContent = cifra.numero;
+    const texto = document.createElement("span");
+    texto.textContent = cifra.texto;
+
+    caja.appendChild(numero);
+    caja.appendChild(texto);
+    resumen.appendChild(caja);
+  }
 }

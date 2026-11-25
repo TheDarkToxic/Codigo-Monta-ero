@@ -1,15 +1,60 @@
-:root { --ink: #111; --orange: #f7931e; --magenta: #c8338c; --green: #2e7d3f; --red: #b3261e; --muted: #5f6368; --bg: #f6f6f7; --border: #dcdce0; }
+/* Colores del diseño acordado en CLAUDE.md */
+:root {
+  --azul: #1F3864;          /* encabezado */
+  --ink: #111;              /* texto normal */
+  --orange: #f7931e;        /* detalle de la primera letra del título */
+  --green: #2e7d3f;         /* «Cumple» */
+  --red: #b3261e;           /* «No cumple» */
+  --amarillo: #f2c200;      /* borde de los avisos de correo */
+  --amarillo-claro: #fff8d6;/* fondo de las tarjetas con aviso de correo */
+  --amarillo-texto: #5c4300;/* texto oscuro que se lee bien sobre amarillo */
+  --bg: #f6f6f7;            /* fondo claro de la página */
+  --border: #dcdce0;
+}
 * { box-sizing: border-box; }
-body { margin: 0; font-family: Arial, Helvetica, sans-serif; background: var(--bg); color: var(--ink); }
-header { background: #000; color: #fff; padding: 12px 16px; display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+
+/* Letra base de 16 px (CLAUDE.md pide 15 px o más) */
+body { margin: 0; font-family: Arial, Helvetica, sans-serif; font-size: 16px; background: var(--bg); color: var(--ink); }
+
+/* Encabezado azul oscuro */
+header { background: var(--azul); color: #fff; padding: 12px 16px; display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
 header h1 { font-size: 20px; margin: 0; flex: 1 1 auto; }
 header h1::first-letter { color: var(--orange); }
 select { font: inherit; padding: 8px; border-radius: 8px; }
+
+/* Resumen del mes: 4 cajas en fila */
+.resumen { max-width: 720px; margin: 16px auto 0; padding: 0 16px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.cifra { background: #fff; border: 1px solid var(--border); border-top: 4px solid var(--azul); border-radius: 10px; padding: 10px; text-align: center; }
+.cifra strong { display: block; font-size: 26px; }
+.cifra span { font-size: 15px; }
+.cifra.cumple { border-top-color: var(--green); }
+.cifra.no-cumple { border-top-color: var(--red); }
+.cifra.aviso { border-top-color: var(--amarillo); }
+
+/* Tarjetas */
 main { max-width: 720px; margin: 0 auto; padding: 16px; }
-.card { background: #fff; border: 1px solid var(--border); border-left: 4px solid var(--orange); border-radius: 10px; padding: 14px; margin-bottom: 12px; }
+.card { background: #fff; border: 1px solid var(--border); border-left: 6px solid var(--border); border-radius: 10px; padding: 14px; margin-bottom: 12px; }
+/* Tarjeta con problema de correo: fondo y borde amarillos.
+   Va ANTES de .ok y .fail para que la franja izquierda siga mostrando verde o rojo. */
+.card.warning { background: var(--amarillo-claro); border-color: var(--amarillo); }
 .card.ok { border-left-color: var(--green); }
-.card.fail { border-left-color: var(--magenta); }
-.card.warning { border-left-color: var(--red); }
-.card h2 { font-size: 17px; margin: 0 0 6px; }
-.card p { line-height: 1.45; margin: 6px 0; }
-.warning-text { color: var(--red); font-weight: bold; }
+.card.fail { border-left-color: var(--red); }
+.card h2 { font-size: 18px; margin: 0 0 6px; }
+.card h3 { font-size: 16px; margin: 14px 0 4px; }
+/* overflow-wrap: los correos largos se parten en vez de salirse de la tarjeta en el celular */
+.card p { line-height: 1.45; margin: 6px 0; overflow-wrap: anywhere; }
+
+/* Etiqueta de calificación */
+.etiqueta { display: inline-block; padding: 3px 12px; border-radius: 999px; font-size: 15px; font-weight: bold; color: #fff; margin-bottom: 6px; }
+.etiqueta.cumple { background: var(--green); }
+.etiqueta.no-cumple { background: var(--red); }
+
+/* Avisos (correo y faltan datos) en amarillo */
+.warning-text { background: #ffe680; color: var(--amarillo-texto); font-weight: bold; padding: 6px 10px; border-radius: 6px; }
+
+/* Celular: pantallas angostas */
+@media (max-width: 520px) {
+  .resumen { grid-template-columns: repeat(2, 1fr); }  /* 2 cajas por fila */
+  header h1 { font-size: 18px; }
+  main { padding: 12px; }
+}
