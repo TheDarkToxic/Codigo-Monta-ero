@@ -61,6 +61,15 @@ main { max-width: 720px; margin: 0 auto; padding: 16px; }
 /* Avisos (correo y faltan datos) en amarillo */
 .warning-text { background: #ffe680; color: var(--amarillo-texto); font-weight: bold; padding: 6px 10px; border-radius: 6px; }
 
+/* Botón de descarga CSV en el encabezado (Ronda 5) */
+.boton-csv { font: inherit; font-size: 15px; padding: 8px 14px; border: 2px solid #fff; border-radius: 8px; background: #fff; color: var(--azul); font-weight: bold; cursor: pointer; }
+
+/* Botones de cada tarjeta (Ronda 5) */
+.acciones { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.accion { font: inherit; font-size: 15px; padding: 8px 14px; border: 2px solid var(--azul); border-radius: 8px; background: var(--azul); color: #fff; cursor: pointer; }
+/* Botón desactivado (correo no válido): gris y sin la manito del mouse */
+.accion:disabled { background: #e4e4e8; border-color: #c4c4c8; color: #6b6b70; cursor: not-allowed; }
+
 /* Celular: pantallas angostas */
 @media (max-width: 520px) {
   .resumen { grid-template-columns: repeat(2, 1fr); }  /* 2 cajas por fila */

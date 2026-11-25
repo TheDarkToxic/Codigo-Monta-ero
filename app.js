@@ -186,6 +186,36 @@ function dibujarTarjetas() {
       tarjeta.appendChild(p);
     }
 
+    // Botones de la tarjeta (Ronda 5): copiar el mensaje y abrir un borrador de correo.
+    const acciones = document.createElement("div");
+    acciones.classList.add("acciones");
+
+    const botonCopiar = document.createElement("button");
+    botonCopiar.type = "button";
+    botonCopiar.classList.add("accion");
+    botonCopiar.textContent = "Copiar mensaje";
+    botonCopiar.addEventListener("click", function () {
+      copiarMensaje(textoDelMensaje(indicador, proveedor, nombre), botonCopiar);
+    });
+    acciones.appendChild(botonCopiar);
+
+    const botonCorreo = document.createElement("button");
+    botonCorreo.type = "button";
+    botonCorreo.classList.add("accion");
+    botonCorreo.textContent = "Abrir en mi correo";
+    if (avisoCorreo !== "") {
+      // Correo vacío o no válido: el botón no se puede usar.
+      botonCorreo.disabled = true;
+      botonCorreo.title = "No se puede: " + avisoCorreo;
+    } else {
+      botonCorreo.addEventListener("click", function () {
+        abrirBorrador(proveedor.correo, indicador, textoDelMensaje(indicador, proveedor, nombre));
+      });
+    }
+    acciones.appendChild(botonCorreo);
+
+    tarjeta.appendChild(acciones);
+
     // Poner la tarjeta en la página.
     providersContainer.appendChild(tarjeta);
   }
@@ -392,3 +422,113 @@ for (const boton of botonesFiltro) {
 
 // Cada vez que se escribe o se borra en el buscador, volver a dibujar.
 document.getElementById("buscador").addEventListener("input", dibujarTarjetas);
+
+// COPIAR, BORRADOR DE CORREO Y DESCARGA CSV (Ronda 5)
+
+// El mensaje completo como un solo texto: los párrafos separados por una línea en blanco.
+function textoDelMensaje(indicador, proveedor, nombre) {
+  return armarMensaje(indicador, proveedor, nombre).join("\n\n");
+}
+
+// Copia el texto al portapapeles y muestra «¡Copiado!» en el botón por 2 segundos.
+function copiarMensaje(texto, boton) {
+  function avisarCopiado() {
+    boton.textContent = "¡Copiado!";
+    setTimeout(function () {
+      boton.textContent = "Copiar mensaje";
+    }, 2000);
+  }
+
+  // Forma moderna de copiar. Si el navegador no la permite, usamos la forma antigua.
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(texto).then(avisarCopiado, function () {
+      copiarFormaAntigua(texto);
+      avisarCopiado();
+    });
+  } else {
+    copiarFormaAntigua(texto);
+    avisarCopiado();
+  }
+}
+
+// Forma antigua de copiar: pone el texto en una caja invisible, lo selecciona y lo copia.
+function copiarFormaAntigua(texto) {
+  const caja = document.createElement("textarea");
+  caja.value = texto;
+  caja.style.position = "fixed";
+  caja.style.opacity = "0";
+  document.body.appendChild(caja);
+  caja.select();
+  document.execCommand("copy");
+  document.body.removeChild(caja);
+}
+
+// Abre un BORRADOR en el programa de correo de la persona (enlace "mailto:").
+// No envía nada: la persona revisa el borrador y decide si lo envía.
+function abrirBorrador(correo, indicador, mensaje) {
+  const asunto = "Indicadores de nivel de servicio – " + mesEnLetras(indicador.periodo);
+  // encodeURIComponent convierte tildes, espacios y saltos de línea a un formato válido para el enlace.
+  const enlace = "mailto:" + correo +
+    "?subject=" + encodeURIComponent(asunto) +
+    "&body=" + encodeURIComponent(mensaje);
+  window.location.href = enlace;
+}
+
+// Lista de avisos de un proveedor (los mismos que muestra su tarjeta).
+function listaDeAvisos(indicador, proveedor) {
+  const avisos = [];
+  const avisoCorreo = revisarCorreo(proveedor ? proveedor.correo : "");
+  if (avisoCorreo !== "") {
+    avisos.push(avisoCorreo);
+  }
+  if (faltanDatos(indicador)) {
+    avisos.push("Faltan datos");
+  }
+  return avisos;
+}
+
+// Prepara un valor para el CSV: lo encierra entre comillas y duplica las comillas internas.
+// Así el punto y coma o los saltos de línea dentro del mensaje no dañan las columnas.
+function celdaCSV(valor) {
+  const texto = String(valor === null || valor === undefined ? "" : valor);
+  return '"' + texto.replace(/"/g, '""') + '"';
+}
+
+// Arma el texto CSV con TODOS los proveedores del mes elegido (sin importar filtros).
+function armarCSV() {
+  const filas = [];
+  filas.push(["Código", "Proveedor", "Correo", "Calificación", "Aviso", "Mensaje"].map(celdaCSV).join(";"));
+
+  for (const indicador of indicadoresDelMes) {
+    const proveedor = buscarProveedor(indicador.id_proveedor);
+    const nombre = proveedor ? proveedor.nombre : indicador.nombre_proveedor;
+    const fila = [
+      indicador.id_proveedor,
+      nombre,
+      proveedor && proveedor.correo ? proveedor.correo : "(vacío)",
+      indicador.calificacion || "sin dato",
+      listaDeAvisos(indicador, proveedor).join(" / "),
+      textoDelMensaje(indicador, proveedor, nombre)
+    ];
+    filas.push(fila.map(celdaCSV).join(";"));
+  }
+
+  // "\r\n" es el salto de línea que espera Excel en Windows.
+  return filas.join("\r\n");
+}
+
+// Crea el archivo y lo descarga. No usa internet: el archivo se arma aquí mismo.
+function descargarCSV() {
+  // "\uFEFF" (BOM) al inicio le dice a Excel que el archivo usa UTF-8, así las tildes se ven bien.
+  const contenido = "\uFEFF" + armarCSV();
+  const archivo = new Blob([contenido], { type: "text/csv;charset=utf-8" });
+  const enlace = document.createElement("a");
+  enlace.href = URL.createObjectURL(archivo);
+  enlace.download = "mensajes_proveedores_" + monthSelect.value + ".csv";
+  document.body.appendChild(enlace);
+  enlace.click();
+  document.body.removeChild(enlace);
+  URL.revokeObjectURL(enlace.href);
+}
+
+document.getElementById("descargar-csv").addEventListener("click", descargarCSV);
