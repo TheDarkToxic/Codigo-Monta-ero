@@ -13,6 +13,17 @@
     <select id="month"></select>
   </header>
   <section id="resumen" class="resumen"></section>
+  <section class="filtros">
+    <!-- Botones de filtro: data-filtro dice qué tarjetas muestra cada uno -->
+    <div class="botones-filtro">
+      <button type="button" class="filtro activo" data-filtro="todos" aria-pressed="true">Todos</button>
+      <button type="button" class="filtro" data-filtro="no-cumple" aria-pressed="false">Solo No cumple</button>
+      <button type="button" class="filtro" data-filtro="aviso-correo" aria-pressed="false">Solo con aviso de correo</button>
+    </div>
+    <!-- Buscador por nombre o código -->
+    <label for="buscador">Buscar proveedor</label>
+    <input type="search" id="buscador" placeholder="Nombre o código, por ejemplo P006">
+  </section>
   <main id="proveedores"></main>
   <script src="datos.js"></script>
   <script src="app.js"></script>

@@ -9,8 +9,8 @@ Marca cada tarea cambiando `[ ]` por `[x]` cuando la termines.
 
 ## Fase 2 – Construcción
 - [ ] Ronda 1: entender la plantilla
-- [ ] Ronda 2: resolver los tres TODO
-- [ ] Ronda 3: resumen y diseño
+- [x] Ronda 2: resolver los tres TODO
+- [x] Ronda 3: resumen y diseño
 - [ ] Ronda 4: filtros y buscador
 - [ ] Ronda 5: copiar, borrador de correo y CSV
 - [ ] Ronda 6: revisión y comentarios

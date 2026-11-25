@@ -129,6 +129,11 @@ function dibujarTarjetas() {
     const nombre = proveedor ? proveedor.nombre : indicador.nombre_proveedor;
     const correo = proveedor && proveedor.correo ? proveedor.correo : "(vacío)";
 
+    // Si no pasa el filtro o la búsqueda (Ronda 4), saltar a la siguiente tarjeta.
+    if (!pasaFiltros(indicador, proveedor, nombre)) {
+      continue;
+    }
+
     // Crear la tarjeta. Los estilos "card", "ok" y "fail" ya están en estilos.css.
     const tarjeta = document.createElement("article");
     tarjeta.classList.add("card");
@@ -183,6 +188,14 @@ function dibujarTarjetas() {
 
     // Poner la tarjeta en la página.
     providersContainer.appendChild(tarjeta);
+  }
+
+  // Si ninguna tarjeta pasó el filtro o la búsqueda, avisar (Ronda 4).
+  if (providersContainer.children.length === 0) {
+    const vacio = document.createElement("p");
+    vacio.classList.add("sin-resultados");
+    vacio.textContent = "No hay proveedores que coincidan.";
+    providersContainer.appendChild(vacio);
   }
 }
 
@@ -334,3 +347,48 @@ function dibujarResumen() {
     resumen.appendChild(caja);
   }
 }
+
+// FILTROS Y BUSCADOR (Ronda 4)
+// Solo cambian qué tarjetas se ven. El resumen sigue contando todo el mes.
+
+// Decide si una tarjeta se muestra, según el botón activo y el texto del buscador.
+// Lee el estado directamente de la página, así no depende de variables sueltas.
+function pasaFiltros(indicador, proveedor, nombre) {
+  // 1) Filtro por botón.
+  const botonActivo = document.querySelector(".filtro.activo");
+  const filtro = botonActivo ? botonActivo.dataset.filtro : "todos";
+
+  if (filtro === "no-cumple" && indicador.calificacion !== "No cumple") {
+    return false;
+  }
+  if (filtro === "aviso-correo" && revisarCorreo(proveedor ? proveedor.correo : "") === "") {
+    return false;
+  }
+
+  // 2) Buscador: nombre o código, sin importar mayúsculas o minúsculas.
+  const buscador = document.getElementById("buscador");
+  const busqueda = buscador ? buscador.value.trim().toLowerCase() : "";
+  if (busqueda === "") {
+    return true;  // buscador vacío: no filtra nada
+  }
+  const enNombre = nombre.toLowerCase().includes(busqueda);
+  const enCodigo = indicador.id_proveedor.toLowerCase().includes(busqueda);
+  return enNombre || enCodigo;
+}
+
+// Al hacer clic en un botón de filtro: marcarlo como activo y volver a dibujar.
+const botonesFiltro = document.querySelectorAll(".filtro");
+for (const boton of botonesFiltro) {
+  boton.addEventListener("click", function () {
+    for (const otro of botonesFiltro) {
+      otro.classList.remove("activo");
+      otro.setAttribute("aria-pressed", "false");  // ayuda a lectores de pantalla
+    }
+    boton.classList.add("activo");
+    boton.setAttribute("aria-pressed", "true");
+    dibujarTarjetas();
+  });
+}
+
+// Cada vez que se escribe o se borra en el buscador, volver a dibujar.
+document.getElementById("buscador").addEventListener("input", dibujarTarjetas);
