@@ -56,6 +56,8 @@ function elegirMes() {
   });
   // Mensaje de comprobación en la consola (F12). Se puede quitar más adelante.
   console.log("Mes elegido:", mesEnLetras(periodoElegido), "- registros:", indicadoresDelMes.length);
+  // Volver a dibujar las tarjetas con el mes nuevo (ver TODO 2).
+  dibujarTarjetas();
 }
 
 // 5) Cada vez que la persona cambie el mes, volver a filtrar.
@@ -67,6 +69,91 @@ elegirMes();
 // TODO 2: recorrer y pintar una tarjeta por proveedor.
 //   - Une cada indicador con su proveedor por id_proveedor.
 //   - Crea una tarjeta en #proveedores con el nombre y los indicadores.
+
+// Revisa si un dato falta (vacío, nulo o que no es un número).
+function faltaDato(valor) {
+  return valor === null || valor === undefined || valor === "" || isNaN(Number(valor));
+}
+
+// Muestra un número con 1 decimal y coma: 86 -> "86,0". Si falta, "sin dato".
+function conUnDecimal(valor) {
+  if (faltaDato(valor)) {
+    return "sin dato";
+  }
+  return Number(valor).toFixed(1).replace(".", ",");
+}
+
+// Igual que la anterior, pero agrega el símbolo de porcentaje: "80,0 %".
+function conPorcentaje(valor) {
+  if (faltaDato(valor)) {
+    return "sin dato";
+  }
+  return conUnDecimal(valor) + " %";
+}
+
+// La meta se muestra sin decimales: 90 -> "90".
+function sinDecimales(valor) {
+  if (faltaDato(valor)) {
+    return "sin dato";
+  }
+  return Number(valor).toFixed(0);
+}
+
+// Busca en la lista "proveedores" el que tiene ese código (P001, P002...).
+// Si no lo encuentra, devuelve undefined (vacío).
+function buscarProveedor(idProveedor) {
+  return proveedores.find(function (proveedor) {
+    return proveedor.id_proveedor === idProveedor;
+  });
+}
+
+// Agrega a la tarjeta una línea del tipo "Etiqueta: valor".
+function agregarLinea(tarjeta, etiqueta, valor) {
+  const linea = document.createElement("p");
+  linea.textContent = etiqueta + ": " + valor;
+  tarjeta.appendChild(linea);
+}
+
+// Borra las tarjetas anteriores y crea una por cada indicador del mes elegido.
+function dibujarTarjetas() {
+  providersContainer.innerHTML = "";  // limpiar lo que había
+
+  for (const indicador of indicadoresDelMes) {
+    // Unir el indicador con su proveedor usando el código.
+    const proveedor = buscarProveedor(indicador.id_proveedor);
+
+    // El nombre y el correo salen de "proveedores" (acuerdo en CLAUDE.md).
+    // Si no encontramos al proveedor, usamos el nombre que trae el indicador.
+    const nombre = proveedor ? proveedor.nombre : indicador.nombre_proveedor;
+    const correo = proveedor && proveedor.correo ? proveedor.correo : "sin dato";
+
+    // Crear la tarjeta. Los estilos "card", "ok" y "fail" ya están en estilos.css.
+    const tarjeta = document.createElement("article");
+    tarjeta.classList.add("card");
+    if (indicador.calificacion === "Cumple") {
+      tarjeta.classList.add("ok");      // franja verde
+    } else if (indicador.calificacion === "No cumple") {
+      tarjeta.classList.add("fail");    // franja de color de "No cumple"
+    }
+
+    // Título de la tarjeta: el nombre del proveedor.
+    const titulo = document.createElement("h2");
+    titulo.textContent = nombre;
+    tarjeta.appendChild(titulo);
+
+    // Una línea por cada dato.
+    agregarLinea(tarjeta, "Código", indicador.id_proveedor);
+    agregarLinea(tarjeta, "Correo", correo);
+    agregarLinea(tarjeta, "OTIF", conPorcentaje(indicador.pct_otif));
+    agregarLinea(tarjeta, "Nivel de inventario", conPorcentaje(indicador.pct_nivel_inventario));
+    agregarLinea(tarjeta, "NS integral", conUnDecimal(indicador.pct_ns_integral));
+    agregarLinea(tarjeta, "Meta", sinDecimales(indicador.meta));
+    agregarLinea(tarjeta, "Calificación", indicador.calificacion || "sin dato");
+
+    // Poner la tarjeta en la página.
+    providersContainer.appendChild(tarjeta);
+  }
+}
 
 // TODO 3: armar el mensaje y avisar si falta el correo.
 //   - Escribe el texto del correo con los valores del proveedor.
