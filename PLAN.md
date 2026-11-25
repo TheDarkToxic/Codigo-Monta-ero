@@ -12,7 +12,7 @@ Marca cada tarea cambiando `[ ]` por `[x]` cuando la termines.
 - [x] Ronda 2: resolver los tres TODO
 - [x] Ronda 3: resumen y diseño
 - [x] Ronda 4: filtros y buscador
-- [ ] Ronda 5: copiar, borrador de correo y CSV
+- [x] Ronda 5: copiar, borrador de correo y CSV
 - [ ] Ronda 6: revisión y comentarios
 - [ ] Ronda 7: EXPLICACION.md
 

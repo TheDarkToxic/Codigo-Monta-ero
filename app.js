@@ -508,7 +508,9 @@ function armarCSV() {
       proveedor && proveedor.correo ? proveedor.correo : "(vacío)",
       indicador.calificacion || "sin dato",
       listaDeAvisos(indicador, proveedor).join(" / "),
-      textoDelMensaje(indicador, proveedor, nombre)
+      // En el CSV, el mensaje va en una sola línea: cada salto de línea (o grupo de saltos)
+      // se cambia por un espacio. Las tarjetas y el botón «Copiar mensaje» no cambian.
+      textoDelMensaje(indicador, proveedor, nombre).replace(/\s*\n+\s*/g, " ")
     ];
     filas.push(fila.map(celdaCSV).join(";"));
   }
