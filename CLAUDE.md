@@ -69,3 +69,40 @@ Más detalle en `docs/reto_haceb.md` y `docs/kit_trabajo.md`.
 - Encabezado azul oscuro (#1F3864), fondo claro y letra de 15 px o más.
 - Verde para «Cumple», rojo para «No cumple» y amarillo para los avisos de correo.
 - Debe verse bien también en un celular.
+
+
+
+## Aclaraciones
+
+### Los números ya vienen calculados
+- En `datos.js`, cada registro de `indicadores` ya trae calculados el % OTIF, el % nivel de inventario, el % NS integral, la meta y la calificación.
+- **No hay que recalcular nada:** usa los valores tal como vienen.
+- La calificación solo puede ser «Cumple» o «No cumple».
+
+### Cuándo un correo es válido
+- Es válido si no está vacío, tiene una sola @, algo antes de la @ y un punto después de la @. Ejemplo: nombre@empresa.example
+- Si está vacío: aviso «Sin correo registrado».
+- Si no tiene @: aviso «Correo no válido (le falta @)».
+- Si tiene otro problema: aviso «Correo no válido».
+
+### Redondeo
+- Todos los porcentajes y el NS integral se muestran con 1 decimal y coma decimal (86,0).
+
+### Casos raros
+- Si a un proveedor le falta un dato en un mes, genera el mensaje igual y escribe «sin dato» en ese lugar del texto (por ejemplo: «OTIF sin dato»). Su tarjeta muestra el aviso «Faltan datos». La página nunca se detiene.
+- Si un proveedor no tiene registro de indicadores en un mes, no aparece ese mes.
+- Si un proveedor no tiene nombre de contacto, el saludo dice: «Hola, equipo de [nombre del proveedor]».
+- Si una tarjeta tiene varios avisos (de correo y de datos), se muestran todos.
+
+### Otros acuerdos
+- La meta se muestra sin decimales (90).
+- El nombre y el correo del proveedor salen de la lista `proveedores`, unida a los indicadores por el código (P001, P002…). La lista `ordenes` no se usa.
+- Las reglas de los extras se definen cuando lleguemos a esa parte.
+
+### Los tres TODO de app.js
+- Antes de resolverlos, léelos y explícanos qué pide cada uno. Los resolvemos de uno en uno.
+
+### Otros archivos de la carpeta
+- `PLAN.md`: lista de tareas del proyecto. Solo la marcamos nosotros.
+- `PRUEBAS.md` y `USUARIOS.md`: resultados de las pruebas. **Los llenamos nosotros: no escribas resultados.**
+- `BITACORA.md` y `PRESENTACION.md`: borradores para la plataforma y la presentación. Solo los modificas si te lo pedimos.
