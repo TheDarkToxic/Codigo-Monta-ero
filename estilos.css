@@ -39,6 +39,10 @@ select { font: inherit; padding: 8px; border-radius: 8px; }
 .filtros label { display: block; font-weight: bold; margin-bottom: 4px; }
 #buscador { font: inherit; width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px; }
 .sin-resultados { text-align: center; color: #5f6368; padding: 24px 0; }
+/* Mensaje cuando no cargan los datos (Ronda 6) */
+.error-carga { background: #fdecea; color: var(--red); border: 1px solid var(--red); border-radius: 10px; padding: 16px; font-weight: bold; }
+/* Controles desactivados (cuando no hay datos) */
+button:disabled, select:disabled, input:disabled { cursor: not-allowed; opacity: 0.6; }
 
 /* Tarjetas */
 main { max-width: 720px; margin: 0 auto; padding: 16px; }
