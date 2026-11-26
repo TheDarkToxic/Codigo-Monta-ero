@@ -7,6 +7,8 @@
   <link rel="stylesheet" href="estilos.css">
 </head>
 <body>
+  <!-- Zona fija: encabezado, resumen, filtros y buscador quedan arriba al bajar por la página -->
+  <div class="zona-fija">
   <header>
     <h1>Mensajes a proveedores</h1>
     <label for="month">Mes</label>
@@ -26,6 +28,7 @@
     <label for="buscador">Buscar proveedor</label>
     <input type="search" id="buscador" placeholder="Nombre o código, por ejemplo P006">
   </section>
+  </div>
   <!-- Aquí van las tarjetas. No se llama "proveedores" para no confundirse con la lista de datos.js -->
   <main id="tarjetas"></main>
   <script src="datos.js"></script>

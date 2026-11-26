@@ -16,6 +16,12 @@
 /* Letra base de 16 px (CLAUDE.md pide 15 px o más) */
 body { margin: 0; font-family: Arial, Helvetica, sans-serif; font-size: 16px; background: var(--bg); color: var(--ink); }
 
+/* Zona fija: se queda pegada arriba al bajar por la página.
+   "sticky" la deja en su lugar normal hasta que llega al borde de arriba; ahí se queda quieta.
+   Como ocupa su propio espacio, las tarjetas empiezan debajo y no quedan tapadas al inicio.
+   El fondo es necesario para que las tarjetas no se vean a través al pasar por debajo. */
+.zona-fija { position: sticky; top: 0; z-index: 10; background: var(--bg); padding-bottom: 12px; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12); }
+
 /* Encabezado azul oscuro */
 header { background: var(--azul); color: #fff; padding: 12px 16px; display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
 header h1 { font-size: 20px; margin: 0; flex: 1 1 auto; }
@@ -73,6 +79,14 @@ main { max-width: 720px; margin: 0 auto; padding: 16px; }
 .accion { font: inherit; font-size: 15px; padding: 8px 14px; border: 2px solid var(--azul); border-radius: 8px; background: var(--azul); color: #fff; cursor: pointer; }
 /* Botón desactivado (correo no válido): gris y sin la manito del mouse */
 .accion:disabled { background: #e4e4e8; border-color: #c4c4c8; color: #6b6b70; cursor: not-allowed; }
+
+/* Pantallas pequeñas (celular, también acostado): solo el encabezado azul queda fijo.
+   "display: contents" hace que la zona fija deje de ser una caja, así cada parte vuelve
+   a comportarse por separado: el encabezado se pega arriba y lo demás se desplaza normal. */
+@media (max-width: 520px), (max-height: 500px) {
+  .zona-fija { display: contents; }
+  header { position: sticky; top: 0; z-index: 10; }
+}
 
 /* Celular: pantallas angostas */
 @media (max-width: 520px) {
