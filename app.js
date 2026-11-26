@@ -290,6 +290,13 @@ function elegirMes() {
 // Solo cambian qué tarjetas se ven. El resumen sigue contando todo el mes.
 // ---------------------------------------------------------------------
 
+// Prepara un texto para comparar en el buscador: minúsculas y sin tildes.
+// "Medellín" -> "medellin". normalize("NFD") separa cada letra de su tilde
+// y replace(...) borra las tildes sueltas que quedaron.
+function paraBuscar(texto) {
+  return texto.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+}
+
 // Decide si una tarjeta se muestra, según el botón activo y el texto del buscador.
 function pasaFiltros(indicador, datos) {
   // 1) Filtro por botón.
@@ -303,13 +310,13 @@ function pasaFiltros(indicador, datos) {
     return false;
   }
 
-  // 2) Buscador: nombre o código, sin importar mayúsculas o minúsculas.
-  const busqueda = buscador.value.trim().toLowerCase();
+  // 2) Buscador: nombre o código, sin importar mayúsculas, minúsculas ni tildes.
+  const busqueda = paraBuscar(buscador.value.trim());
   if (busqueda === "") {
     return true;  // buscador vacío: no filtra nada
   }
-  const enNombre = datos.nombre.toLowerCase().includes(busqueda);
-  const enCodigo = datos.codigo.toLowerCase().includes(busqueda);
+  const enNombre = paraBuscar(datos.nombre).includes(busqueda);
+  const enCodigo = paraBuscar(datos.codigo).includes(busqueda);
   return enNombre || enCodigo;
 }
 
