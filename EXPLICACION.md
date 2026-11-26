@@ -89,7 +89,8 @@ Recetas para mostrar los datos como pide CLAUDE.md:
 - `pasaFiltros` decide si una tarjeta se muestra:
   - con **«Solo No cumple»**, deja solo las que no cumplen;
   - con **«Solo con aviso de correo»**, deja solo las que tienen problema de correo (P011 y P012);
-  - con el **buscador**, deja solo las que tienen el texto escrito en el nombre o en el código, sin importar mayúsculas. «p006», «P006» y «VIDRIOS» encuentran la misma tarjeta.
+  - con el **buscador**, deja solo las que tienen el texto escrito en el nombre o en el código, sin importar mayúsculas ni tildes. «p006», «P006» y «VIDRIOS» encuentran la misma tarjeta, y «medellin» encuentra «Medellín».
+- `paraBuscar`: prepara un texto para el buscador. Lo pasa a minúsculas y le quita las tildes, así «Medellín» queda como «medellin».
 - `activarFiltro`: resalta el botón al que se le hizo clic, apaga los demás y redibuja las tarjetas.
 
 ### Parte 8. Dibujar las tarjetas
@@ -228,7 +229,6 @@ En ningún caso la página se detiene.
 
 **8. ¿Qué limitaciones tiene y qué mejorarían después?**
 - **Correos:** solo revisa que estén bien escritos, no que existan.
-- **Buscador:** distingue tildes («metalicas» no encuentra «Metálicas»).
 - **Actualización:** `datos.js` se actualiza a mano.
 
 Como mejoras siguientes:

@@ -11,4 +11,4 @@
 | 6 | Uso por otra persona | Alguien de otro equipo genera un mes | Lo logra sin ayuda | Pendiente | Pendiente |
 
 
-Pruebas realizadas el 25 de noviembre de 2026 por Sergio Calderón.
+Pruebas realizadas el 25 de noviembre de 2026 por el equipo Código Montañero.
