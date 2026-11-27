@@ -27,6 +27,89 @@ const botonCSV = document.getElementById("descargar-csv");
 // Aquí guardamos los indicadores del mes elegido (se llena en la Parte 6).
 let indicadoresDelMes = [];
 
+// Registro local de mensajes generados. La clave evita duplicar un mensaje
+// para el mismo proveedor y período. Se guarda en el navegador (localStorage).
+const CLAVE_MENSAJES = "proveeMensajes.registro.v1";
+let mensajes = cargarMensajes();
+
+function cargarMensajes() {
+  try {
+    const guardados = JSON.parse(localStorage.getItem(CLAVE_MENSAJES) || "[]");
+    return Array.isArray(guardados) ? guardados : [];
+  } catch (error) {
+    console.warn("No se pudo leer el historial local de mensajes.", error);
+    return [];
+  }
+}
+
+function guardarMensajes() {
+  try {
+    localStorage.setItem(CLAVE_MENSAJES, JSON.stringify(mensajes));
+    return true;
+  } catch (error) {
+    console.error("No se pudo guardar el historial local de mensajes.", error);
+    return false;
+  }
+}
+
+function claveMensaje(indicador) {
+  return textoLimpio(indicador.id_proveedor) + "|" + textoLimpio(indicador.periodo);
+}
+
+function buscarMensaje(indicador) {
+  const clave = claveMensaje(indicador);
+  return mensajes.find(function (mensaje) {
+    return mensaje.clave === clave;
+  });
+}
+
+// Crea o actualiza un mensaje pendiente, sin duplicar proveedor + período.
+function guardarMensajePendiente(indicador, datos) {
+  const clave = claveMensaje(indicador);
+  const existente = mensajes.find(function (mensaje) {
+    return mensaje.clave === clave;
+  });
+  const ahora = new Date().toISOString();
+  const asunto = "Indicadores de nivel de servicio – " + mesEnLetras(indicador.periodo);
+  const contenido = textoDelMensaje(indicador, datos);
+
+  if (existente) {
+    // Si ya fue enviado, no reemplazamos su registro ni lo regresamos a pendiente.
+    if (existente.estado === "Enviado") {
+      return { ok: false, mensaje: "Este mensaje ya figura como enviado." };
+    }
+    existente.asunto = asunto;
+    existente.contenido = contenido;
+    existente.correo = datos.correo;
+    existente.calificacion = textoLimpio(indicador.calificacion) || "sin dato";
+    existente.actualizado = ahora;
+    existente.estado = "Pendiente";
+  } else {
+    mensajes.push({
+      id: "MSG-" + Date.now() + "-" + Math.random().toString(36).slice(2, 7).toUpperCase(),
+      clave: clave,
+      id_proveedor: datos.codigo,
+      proveedor: datos.nombre,
+      periodo: textoLimpio(indicador.periodo),
+      correo: datos.correo,
+      asunto: asunto,
+      contenido: contenido,
+      calificacion: textoLimpio(indicador.calificacion) || "sin dato",
+      estado: "Pendiente",
+      fecha_generacion: ahora,
+      actualizado: ahora,
+      fecha_envio: null
+    });
+  }
+
+  const guardado = guardarMensajes();
+  return {
+    ok: guardado,
+    mensaje: guardado ? "Mensaje guardado como pendiente." : "No se pudo guardar. Revisa el almacenamiento del navegador."
+  };
+}
+
+
 
 // ---------------------------------------------------------------------
 // PARTE 2. Formatos: textos, números y meses
@@ -411,9 +494,25 @@ function crearTarjeta(indicador, datos) {
     tarjeta.appendChild(p);
   }
 
-  // Botones: copiar el mensaje y abrir un borrador de correo.
+  // Estado del mensaje guardado para este proveedor y período.
+  const registroMensaje = buscarMensaje(indicador);
+  agregarLinea(tarjeta, "Estado del mensaje", registroMensaje ? registroMensaje.estado : "No generado");
+
+  // Botones: guardar mensaje pendiente, copiarlo y abrir un borrador de correo.
   const acciones = document.createElement("div");
   acciones.classList.add("acciones");
+
+  const botonGuardar = crearBotonAccion(registroMensaje ? "Actualizar mensaje pendiente" : "Guardar como pendiente");
+  botonGuardar.addEventListener("click", function () {
+    if (datos.avisoCorreo !== "" || faltanDatos(indicador)) {
+      alert("No se puede guardar: revisa los avisos y completa los datos requeridos.");
+      return;
+    }
+    const resultado = guardarMensajePendiente(indicador, datos);
+    alert(resultado.mensaje);
+    dibujarTarjetas();
+  });
+  acciones.appendChild(botonGuardar);
 
   const botonCopiar = crearBotonAccion("Copiar mensaje");
   botonCopiar.addEventListener("click", function () {
@@ -428,6 +527,13 @@ function crearTarjeta(indicador, datos) {
     botonCorreo.title = "No se puede: " + datos.avisoCorreo;
   } else {
     botonCorreo.addEventListener("click", function () {
+      // Abrir el borrador no equivale a enviar el correo.
+      const registro = buscarMensaje(indicador);
+      if (registro && registro.estado !== "Enviado") {
+        registro.estado = "Borrador abierto";
+        registro.actualizado = new Date().toISOString();
+        guardarMensajes();
+      }
       abrirBorrador(datos.correo, indicador, textoDelMensaje(indicador, datos));
     });
   }
@@ -586,15 +692,19 @@ function celdaCSV(valor) {
 // Arma el texto CSV con TODOS los proveedores del mes elegido (sin importar filtros).
 function armarCSV() {
   const filas = [];
-  filas.push(["Código", "Proveedor", "Correo", "Calificación", "Aviso", "Mensaje"].map(celdaCSV).join(";"));
+  filas.push(["ID mensaje", "Código", "Proveedor", "Correo", "Período", "Calificación", "Estado", "Aviso", "Mensaje"].map(celdaCSV).join(";"));
 
   for (const indicador of indicadoresDelMes) {
     const datos = datosDelProveedor(indicador);
+    const registro = buscarMensaje(indicador);
     const fila = [
+      registro ? registro.id : "",
       datos.codigo,
       datos.nombre,
       datos.correo || "(vacío)",
+      textoLimpio(indicador.periodo),
       textoLimpio(indicador.calificacion) || "sin dato",
+      registro ? registro.estado : "No generado",
       listaDeAvisos(indicador, datos).join(" / "),
       // En el CSV el mensaje va en una sola línea: cada salto de línea (o grupo de saltos)
       // se cambia por un espacio. Las tarjetas y el botón «Copiar mensaje» no cambian.
@@ -660,6 +770,12 @@ if (!datosListos) {
     boton.addEventListener("click", function () {
       activarFiltro(boton);
     });
+  }
+
+  // Primer dibujo: queda elegido el mes más reciente.
+  elegirMes();
+}
+
   }
 
   // Primer dibujo: queda elegido el mes más reciente.
